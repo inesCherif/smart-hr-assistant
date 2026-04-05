@@ -1,0 +1,72 @@
+# =============================
+# SECRETS
+# =============================
+.env
+*.env
+.env.*
+secrets.properties
+config.properties
+
+# =============================
+# JAVA BUILD OUTPUT
+# =============================
+target/
+*.class
+*.jar
+*.war
+
+# =============================
+# MAVEN
+# =============================
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+
+# =============================
+# IDE FILES
+# =============================
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# =============================
+# DOCKER
+# =============================
+docker-compose.override.yml
+
+# =============================
+# MYSQL LOCAL DATA
+# =============================
+mysql-data/
+data/
+
+# =============================
+# OS FILES
+# =============================
+# Windows
+Thumbs.db
+desktop.ini
+
+# Mac
+.DS_Store
+.AppleDouble
+
+# Linux
+*~
+
+# =============================
+# LOGS
+# =============================
+*.log
+logs/
