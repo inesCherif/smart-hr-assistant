@@ -36,6 +36,11 @@ public class HRServer {
             System.out.println("✅ Smart HR Server is successfully bound inside the Registry!");
             System.out.println("⏳ Awaiting internal client connections...");
 
+            // Keep the application running indefinitely
+            while (true) {
+                Thread.sleep(Long.MAX_VALUE);
+            }
+
         } catch (Exception e) {
             System.err.println("❌ Smart HR Server encountered a fatal initialization error:");
             e.printStackTrace();
