@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  hr_network:
+    driver: bridge
+
 services:
   database:
     image: mysql:8.0
@@ -11,4 +15,94 @@ services:
       - "3306:3306"
     volumes:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-    restart: always
+    networks:
+      - hr_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rmiregistry:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: hr_rmiregistry
+    ports:
+      - "1099:1099"
+    working_dir: /app/target/classes
+    command: ["rmiregistry", "1099"]
+    networks:
+      - hr_network
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: hr_server
+    environment:
+      - DB_URL=jdbc:mysql://database:3306/hr_db
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - RMI_HOST=rmiregistry
+      - RMI_PORT=1099
+      - SERVER_HOST=server
+    env_file:
+      - ./server/.env
+    networks:
+      - hr_network
+    depends_on:
+      database:
+        condition: service_healthy
+      rmiregistry:
+        condition: service_started
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: hr_client
+    environment:
+      - RMI_HOST=server
+      - RMI_PORT=1099
+    stdin_open: true # Keeps STDIN open so we can type natively
+    tty: true        # Simulates a terminal
+    networks:
+      - hr_network
+    depends_on:
+      - server
+
+  # ==========================================
+  # NEW WEB ISOLATED COMPONENTS (BONUS UI)
+  # ==========================================
+
+  web_gateway:
+    build:
+      context: ./web-gateway
+      dockerfile: Dockerfile
+    container_name: hr_web_gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - RMI_HOST=server
+      - RMI_PORT=1099
+    networks:
+      - hr_network
+    depends_on:
+      - server
+
+  react_ui:
+    build:
+      context: ./react-ui
+      dockerfile: Dockerfile
+    container_name: hr_react_ui
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Helps hot-reload in Native Docker networks
+    volumes:
+      - ./react-ui/src:/app/src
+    networks:
+      - hr_network
+    depends_on:
+      - web_gateway
