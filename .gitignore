@@ -70,3 +70,14 @@ desktop.ini
 # =============================
 *.log
 logs/
+
+
+# =============================
+# NODE / REACT UI
+# =============================
+node_modules/
+dist/
+build/
+.eslintcache
+.stylelintcache
+*.local
