@@ -1,5 +1,4 @@
-# The Smart HR Assistant: A Complete Educational Guide 🧠📚
-
+# The Smart HR Assistant: A Complete Educational Guide
 Welcome! If you have never built a distributed system, never used Docker, or never worked with AI APIs, you are in exactly the right place. 
 
 This guide is designed to take you by the hand and explain **every single concept** behind the Smart HR Assistant project. We will unpack the "Why", the "How", and look at every file as if you were building an entire tech startup from your laptop.
@@ -36,19 +35,19 @@ Before we look at the code, let's understand the vocabulary:
 
 ## 3. The Communication Layer: Before and After Docker
 
-### What is Java RMI? 📞
+### What is Java RMI? 
 Our Client and our Server are separate programs. How do they talk to each other if they are running in completely different places?
 Java uses **RMI (Remote Method Invocation)**. Think of RMI exactly like a telephone system:
 - **The Interface (`HRService`)**: This is the telephone contract. Both the client and the server agree on exactly what questions can be asked over the phone.
 - **The Registry (`rmiregistry`)**: This is the **Phonebook**. When the Server starts, it lists its name and phone number in the Phonebook. When the Client starts, it looks up the Server in the Phonebook to find out how to call it.
 
-### Communication BEFORE Docker 💻
+### Communication BEFORE Docker 
 If you run this on your laptop without Docker, everything happens inside your single machine.
 - The Server starts, registers itself at `localhost:1099` (localhost means "this specific computer").
 - The Database runs on `localhost:3306`.
 - The Client opens, looks at `localhost:1099`, finds the server, and talks to it instantly.
 
-### Communication AFTER Docker 🐳
+### Communication AFTER Docker 
 When you put a system into production, you use **Docker**. Docker packages your applications into "Containers". A Container is like a tiny, virtualized mini-computer. 
 - Suddenly, the Database, the Registry, the Server, and the Client are all locked inside their own separate mini-computers!
 - They no longer share `localhost`. 
@@ -72,12 +71,12 @@ We didn't write all the code at once. We built it in **Phases**. Why? In softwar
 
 Imagine you are reading the files in exactly the order they were built. Here is how every piece connects:
 
-### 🗄️ The Database
+### The Database
 
 **`database/init.sql`**
 This is a raw text file containing SQL instructions. When the database boots up, it reads this file line-by-line to execute commands like `CREATE TABLE employees ...` and `INSERT INTO employees ...`. It magically creates our mock company before the Java code even turns on.
 
-### 🧠 The Server (The Brain)
+### The Server (The Brain)
 
 **`server/pom.xml`**
 Maven is our builder tool. Instead of us manually downloading ZIP files from the internet for our tools, `pom.xml` acts as a shopping list. It tells Maven: *"Hey, go download the MySQL connector and the tool to parse JSON!"*
@@ -104,7 +103,7 @@ This is the orchestra conductor. When a Client triggers `askQuestion()`:
 **`server/src/.../HRServer.java`**
 This is the Receptionist. It runs the main program. It creates the RMI Registry (the phonebook), binds the `HRServiceImpl` to the name `"SmartHRService"`, and just sits there waiting infinitely for incoming calls.
 
-### 💻 The Client (The HR Interface)
+### The Client (The HR Interface)
 
 **`client/pom.xml`**
 Notice how empty this is compared to the server? The client doesn't need to know how MySQL works. It doesn't need to know how AI works. It is completely lightweight. 
@@ -116,7 +115,7 @@ This is an **exact copy** of the Server's interface. Why? Because the Client nee
 This is the terminal UI you interact with. It contains a `while(true)` loops that constantly prompts you: `HR Manager >`.
 When you type a sentence, it looks up `"SmartHRService"` in the Registry phonebook, triggers the remote `askQuestion` wire, waits patiently while the Brain works, and prints out the final answer!
 
-### 🐳 The Orchestrator
+### The Orchestrator
 
 **`docker-compose.yml`**
 This is the master architect blueprint. With one command (`docker-compose up`), Docker reads this file and:
