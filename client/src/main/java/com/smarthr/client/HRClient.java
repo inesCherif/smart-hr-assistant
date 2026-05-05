@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class HRClient {
     public static void main(String[] args) {
         System.out.println("=================================================");
-        System.out.println("       🧠 Smart HR Assistant Interface 🧠       ");
+        System.out.println("       Smart HR Assistant Interface       ");
         System.out.println("=================================================");
 
         // Fetch location properly; allowing defaults for local testing 
@@ -19,16 +19,16 @@ public class HRClient {
         
         try {
             port = Integer.parseInt(portStr);
-            System.out.println("🔄 Looking for the RMI Server Registry at " + host + ":" + port + "...");
+            System.out.println("Looking for the RMI Server Registry at " + host + ":" + port + "...");
             
             // Connect to Registry and fetch Service Object using interface
             Registry registry = LocateRegistry.getRegistry(host, port);
             HRService smartHR = (HRService) registry.lookup("SmartHRService");
             
-            System.out.println("✅ Connected successfully to the Server Core!\n");
+            System.out.println("Connected successfully to the Server Core!\n");
 
             Scanner scanner = new Scanner(System.in);
-            System.out.println("💡 Type your HR question in natural language.");
+            System.out.println("   Type your HR question in natural language.");
             System.out.println("   Example: 'How many employees work in IT?'");
             System.out.println("   (Type 'exit' to quit)\n");
 
@@ -37,7 +37,7 @@ public class HRClient {
                 String input = scanner.nextLine().trim();
 
                 if (input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("quit")) {
-                    System.out.println("👋 Goodbye!");
+                    System.out.println("Goodbye!");
                     break;
                 }
 
@@ -45,7 +45,7 @@ public class HRClient {
                     continue;
                 }
 
-                System.out.println("⏳ Analyzing and fetching data...");
+                System.out.println("Analyzing and fetching data...");
                 try {
                     // This invokes the RMI network call to the Java Server remotely
                     String answer = smartHR.askQuestion(input);
@@ -54,14 +54,14 @@ public class HRClient {
                     System.out.println(answer);
                     System.out.println("-------------------------------------------------\n");
                 } catch (Exception e) {
-                    System.err.println("❌ Network Error: The server appears to be unreachable or threw an error.");
+                    System.err.println("Network Error: The server appears to be unreachable or threw an error.");
                     System.err.println("Details: " + e.getMessage());
                 }
             }
             scanner.close();
             
         } catch (Exception e) {
-            System.err.println("❌ Fatal Client Error: Could not connect to RMI service.");
+            System.err.println("Fatal Client Error: Could not connect to RMI service.");
             e.printStackTrace();
         }
     }
